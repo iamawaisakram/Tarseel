@@ -4,36 +4,15 @@ const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 export default StyleSheet.create({
-  container: {
-    height: height,
-    width: width,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    color: 'white',
-    margin: 10
-  },
   textInputView: {
     width: width * 0.95,
-    height: height * 0.35
+    height: height * 0.35,
+    marginBottom: height * 0.08
   },
   textInput: {
     backgroundColor: 'white',
     marginTop: width * 0.01,
     borderRadius: 5
-  },
-  forgotPassword: {
-    backgroundColor: 'transparent',
-    height: height * 0.04,
-    width: width * 0.3,
-    marginLeft: width * 0.01,
-    marginTop: height * 0.01
-  },
-  forgotPasswordText: {
-    color: 'white'
   },
   button: {
     backgroundColor: 'white',

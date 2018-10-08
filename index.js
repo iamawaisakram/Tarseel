@@ -11,6 +11,9 @@ import { Platform } from 'react-native';
 import Dashboard from './pages/dashboard/Dashboard';
 import Settings from './pages/settings/Settings';
 import Profile from './pages/profile/Profile';
+import Login from './pages/login/Login';
+import Signup from './pages/signup/Signup';
+
 //icons
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -52,7 +55,6 @@ const Tab = createBottomTabNavigator(
       inactiveTintColor: '#C1C7C9',
       style: {
         backgroundColor: 'rgb(97, 144, 232)',
-        // backgroundColor: '#84C5DB',
         borderTopColor: 'transparent',
         shadowRadius: 2,
         shadowOffset: {
@@ -67,16 +69,18 @@ const Tab = createBottomTabNavigator(
     swipeEnabled: false
   },
   {
-    initialRouteName: 'Home',
     headerMode: 'none'
   }
 );
 
 const RootStack = createStackNavigator(
   {
+    Login: Login,
+    Signup: Signup,
     Tabs: Tab
   },
   {
+    initialRouteName: 'Login',
     headerMode: 'none'
   }
 );

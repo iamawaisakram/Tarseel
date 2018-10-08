@@ -5,16 +5,17 @@ import {
   TextInput,
   Keyboard,
   TouchableOpacity,
-  AsyncStorage
+  AsyncStorage,
+  ScrollView
 } from 'react-native';
 
 //components
 import withAppHOC from '../../hocs/withAppHOC';
 
 //style
-import styles from '../../styles/Login';
+import styles from '../../styles/Signup';
 
-class Login extends Component {
+class Signup extends Component {
   constructor(props) {
     super(props);
 
@@ -31,12 +32,10 @@ class Login extends Component {
     console.log(data);
   }
 
-  login() {
+  signUp() {
     const { navigation } = this.props;
 
-    AsyncStorage.setItem('user', JSON.stringify(this.state.data));
-
-    navigation.navigate('Home');
+    navigation.navigate('Login');
   }
 
   render() {
@@ -45,8 +44,21 @@ class Login extends Component {
         <View style={styles.textInputView}>
           <TextInput
             style={styles.textInput}
+            placeholder="Name"
+            onChangeText={text => this.changeText('name', text)}
+            onSubmitEditing={() => {
+              this.email.focus();
+            }}
+            blurOnSubmit={false}
+            value={this.state.data['name']}
+          />
+          <TextInput
+            style={styles.textInput}
             placeholder="E-Mail Address"
             onChangeText={text => this.changeText('email', text)}
+            ref={input => {
+              this.email = input;
+            }}
             onSubmitEditing={() => {
               this.password.focus();
             }}
@@ -62,19 +74,29 @@ class Login extends Component {
             }}
             secureTextEntry={true}
             value={this.state.data['password']}
+            onSubmitEditing={() => {
+              this.confirmPassword.focus();
+            }}
+          />
+          <TextInput
+            style={styles.textInput}
+            placeholder="Confirm Password"
+            onChangeText={text => this.changeText('confirmPassword', text)}
+            ref={input => {
+              this.confirmPassword = input;
+            }}
+            secureTextEntry={true}
+            value={this.state.data['confirmPassword']}
             onSubmitEditing={Keyboard.dismiss}
           />
-          <TouchableOpacity style={styles.forgotPassword}>
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => this.login()}>
-            <Text style={styles.buttonText}>Login</Text>
+          <TouchableOpacity style={styles.button} onPress={() => this.signUp()}>
+            <Text style={styles.buttonText}>SignUp</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.signupButton}
-            onPress={() => this.props.navigation.navigate('Signup')}
+            onPress={() => this.props.navigation.navigate('Login')}
           >
-            <Text style={styles.signupButtonText}>Not a member?</Text>
+            <Text style={styles.signupButtonText}>Already a member?</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -82,4 +104,4 @@ class Login extends Component {
   }
 }
 
-export default withAppHOC(Login);
+export default withAppHOC(Signup);

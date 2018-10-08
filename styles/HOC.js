@@ -10,10 +10,14 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  welcome: {
-    fontSize: 20,
+  header: {
     textAlign: 'center',
+    top: 20,
+    position: 'absolute',
+    height: height * 0.1
+  },
+  headerText: {
     color: 'white',
-    margin: 10
+    fontSize: 40
   }
 });
