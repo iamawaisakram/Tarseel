@@ -6,6 +6,7 @@ import {
   createStackNavigator
 } from 'react-navigation';
 import { Platform } from 'react-native';
+import { Provider } from 'react-redux';
 
 //components
 import Dashboard from './pages/dashboard/Dashboard';
@@ -13,9 +14,13 @@ import Settings from './pages/settings/Settings';
 import Profile from './pages/profile/Profile';
 import Login from './pages/login/Login';
 import Signup from './pages/signup/Signup';
+import configureStore from './configureStore';
 
 //icons
 import Icon from 'react-native-vector-icons/Ionicons';
+
+//constant
+const store = configureStore();
 
 class App extends Component {
   render() {
@@ -23,7 +28,13 @@ class App extends Component {
   }
 }
 
-AppRegistry.registerComponent(appName, () => App);
+const Tarseel = () => (
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
+
+AppRegistry.registerComponent(appName, () => Tarseel);
 
 const Tab = createBottomTabNavigator(
   {
@@ -80,7 +91,7 @@ const RootStack = createStackNavigator(
     Tabs: Tab
   },
   {
-    initialRouteName: 'Login',
+    initialRouteName: 'Tabs',
     headerMode: 'none'
   }
 );

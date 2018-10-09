@@ -11,15 +11,22 @@ import {
 //components
 import withAppHOC from '../../hocs/withAppHOC';
 
+//utilities
+import validation from '../../utilities/Validations';
+
 //style
 import styles from '../../styles/Login';
+
+//constants
+let RESULT;
 
 class Login extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      data: {}
+      data: {},
+      showError: false
     };
   }
 
@@ -34,15 +41,25 @@ class Login extends Component {
   login() {
     const { navigation } = this.props;
 
-    AsyncStorage.setItem('user', JSON.stringify(this.state.data));
+    RESULT = validation(this.state.data);
 
-    navigation.navigate('Home');
+    if (RESULT.value) {
+      AsyncStorage.setItem('user', JSON.stringify(this.state.data));
+      navigation.navigate('Home');
+    } else {
+      this.setState({ showError: true });
+    }
   }
 
   render() {
     return (
       <View>
         <View style={styles.textInputView}>
+          {this.state.showError && (
+            <View style={styles.errorView}>
+              <Text style={styles.errorText}>{RESULT.error}</Text>
+            </View>
+          )}
           <TextInput
             style={styles.textInput}
             placeholder="E-Mail Address"

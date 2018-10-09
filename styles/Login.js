@@ -60,5 +60,18 @@ export default StyleSheet.create({
   signupButtonText: {
     color: 'red',
     fontSize: 18
+  },
+  errorView: {
+    backgroundColor: 'white',
+    height: height * 0.08,
+    marginBottom: height * 0.02,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+    textAlign: 'center'
   }
 });

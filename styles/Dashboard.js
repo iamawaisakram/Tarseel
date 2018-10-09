@@ -5,15 +5,13 @@ const height = Dimensions.get('window').height;
 
 export default StyleSheet.create({
   container: {
-    height: height,
+    ...StyleSheet.absoluteFillObject,
+    height: height * 0.875,
     width: width,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center'
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    color: 'white',
-    margin: 10
+  map: {
+    ...StyleSheet.absoluteFillObject
   }
 });

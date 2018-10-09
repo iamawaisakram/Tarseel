@@ -12,15 +12,22 @@ import {
 //components
 import withAppHOC from '../../hocs/withAppHOC';
 
+//utilities
+import { signupValidations } from '../../utilities/Validations';
+
 //style
 import styles from '../../styles/Signup';
+
+//const
+let RESULT;
 
 class Signup extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      data: {}
+      data: {},
+      showError: false
     };
   }
 
@@ -35,13 +42,24 @@ class Signup extends Component {
   signUp() {
     const { navigation } = this.props;
 
-    navigation.navigate('Login');
+    RESULT = signupValidations(this.state.data);
+
+    if (RESULT.value) {
+      navigation.navigate('Login');
+    } else {
+      this.setState({ showError: true });
+    }
   }
 
   render() {
     return (
       <View>
         <View style={styles.textInputView}>
+          {this.state.showError && (
+            <View style={styles.errorView}>
+              <Text style={styles.errorText}>{RESULT.error}</Text>
+            </View>
+          )}
           <TextInput
             style={styles.textInput}
             placeholder="Name"
