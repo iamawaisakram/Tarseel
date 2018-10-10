@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
-import { Text, View, Dimensions } from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import {
+  Text,
+  View,
+  Dimensions,
+  TouchableOpacity,
+  Platform
+} from 'react-native';
+import MapView, { Marker, AnimatedRegion, Polyline } from 'react-native-maps';
 import RetroMapStyles from './components/RetroStyle.json';
+import haversine from 'haversine';
 
 //components
 import withUserHOC from '../../hocs/withUserHOC';
@@ -28,55 +35,109 @@ class Dashboard extends Component {
         longitude: LONGITUDE,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA
-      }
+      },
+      latitude: LATITUDE,
+      longitude: LONGITUDE,
+      routeCoordinates: [],
+      distanceTravelled: 0,
+      prevLatLng: {},
+      coordinate: new AnimatedRegion({
+        latitude: LATITUDE,
+        longitude: LONGITUDE
+      })
     };
   }
 
-  componentDidMount() {
+  componentWillMount() {
     navigator.geolocation.getCurrentPosition(
+      position => {},
+      error => alert(error.message),
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 1000
+      }
+    );
+  }
+
+  componentDidMount() {
+    const { coordinate } = this.state;
+    this.watchID = navigator.geolocation.watchPosition(
       position => {
-        this.setState({
-          region: {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA
+        const { coordinate, routeCoordinates, distanceTravelled } = this.state;
+        const { latitude, longitude } = position.coords;
+
+        const newCoordinate = {
+          latitude,
+          longitude
+        };
+
+        if (Platform.OS === 'android') {
+          if (this.marker) {
+            this.marker._component.animateMarkerToCoordinate(
+              newCoordinate,
+              500
+            );
           }
+        } else {
+          coordinate.timing(newCoordinate).start();
+        }
+
+        this.setState({
+          latitude,
+          longitude,
+          routeCoordinates: routeCoordinates.concat([newCoordinate]),
+          distanceTravelled:
+            distanceTravelled + this.calcDistance(newCoordinate),
+          prevLatLng: newCoordinate
         });
       },
-      error => console.log(error.message),
-      { enableHighAccuracy: true, timeout: 20000 }
+      error => console.log(error),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
     );
-    this.watchID = navigator.geolocation.watchPosition(position => {
-      this.setState({
-        region: {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          latitudeDelta: LATITUDE_DELTA,
-          longitudeDelta: LONGITUDE_DELTA
-        }
-      });
-    });
   }
 
   componentWillUnmount() {
     navigator.geolocation.clearWatch(this.watchID);
   }
 
+  calcDistance = newLatLng => {
+    const { prevLatLng } = this.state;
+    return haversine(prevLatLng, newLatLng) || 0;
+  };
+
+  getMapRegion = () => ({
+    latitude: this.state.latitude,
+    longitude: this.state.longitude,
+    latitudeDelta: LATITUDE_DELTA,
+    longitudeDelta: LONGITUDE_DELTA
+  });
+
   render() {
     return (
       <View style={styles.container}>
         <MapView
-          provider={PROVIDER_GOOGLE}
-          style={styles.container}
-          customMapStyle={RetroMapStyles}
-          showsUserLocation={true}
-          region={this.state.region}
-          onRegionChange={region => this.setState({ region })}
-          onRegionChangeComplete={region => this.setState({ region })}
+          style={styles.map}
+          showUserLocation
+          followUserLocation
+          loadingEnabled
+          region={this.getMapRegion()}
         >
-          <MapView.Marker coordinate={this.state.region} />
+          <Polyline coordinates={this.state.routeCoordinates} strokeWidth={5} />
+          <Marker.Animated
+            ref={marker => {
+              this.marker = marker;
+            }}
+            coordinate={this.state.coordinate}
+          />
         </MapView>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={[styles.bubble, styles.button]}>
+            <Text style={styles.bottomBarContent}>
+              {parseFloat(this.state.distanceTravelled).toFixed(2)} km
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
