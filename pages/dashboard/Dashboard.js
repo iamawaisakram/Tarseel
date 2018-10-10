@@ -22,8 +22,8 @@ let { width, height } = Dimensions.get('window');
 const ASPECT_RATIO = width / height;
 const LATITUDE = 0;
 const LONGITUDE = 0;
-const LATITUDE_DELTA = 0.0922;
-const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+const LATITUDE_DELTA = 0.0922 * 0.09;
+const LONGITUDE_DELTA = 0.0922 * 0.09;
 
 class Dashboard extends Component {
   constructor(props) {
@@ -46,18 +46,11 @@ class Dashboard extends Component {
         longitude: LONGITUDE
       })
     };
+    this.mapRef = null;
   }
 
   componentWillMount() {
-    navigator.geolocation.getCurrentPosition(
-      position => {},
-      error => alert(error.message),
-      {
-        enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 1000
-      }
-    );
+    this.getLocation();
   }
 
   componentDidMount() {
@@ -76,7 +69,7 @@ class Dashboard extends Component {
           if (this.marker) {
             this.marker._component.animateMarkerToCoordinate(
               newCoordinate,
-              500
+              200
             );
           }
         } else {
@@ -101,6 +94,18 @@ class Dashboard extends Component {
     navigator.geolocation.clearWatch(this.watchID);
   }
 
+  getLocation() {
+    navigator.geolocation.getCurrentPosition(
+      position => {},
+      error => alert(error.message),
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 1000
+      }
+    );
+  }
+
   calcDistance = newLatLng => {
     const { prevLatLng } = this.state;
     return haversine(prevLatLng, newLatLng) || 0;
@@ -121,7 +126,10 @@ class Dashboard extends Component {
           showUserLocation
           followUserLocation
           loadingEnabled
+          showsMyLocationButton
+          zoomEnabled
           region={this.getMapRegion()}
+          customMapStyle={RetroMapStyles}
         >
           <Polyline coordinates={this.state.routeCoordinates} strokeWidth={5} />
           <Marker.Animated

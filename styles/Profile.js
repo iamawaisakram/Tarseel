@@ -1,19 +1,23 @@
-import { Platform, Dimensions, StyleSheet } from 'react-native';
+import { Platform, PixelRatio, Dimensions, StyleSheet } from 'react-native';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 export default StyleSheet.create({
   container: {
-    height: height,
-    width: width,
-    justifyContent: 'center',
+    marginTop: height * 0.003,
+    flex: 1,
+    justifyContent: 'flex-start',
     alignItems: 'center'
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    color: 'white',
-    margin: 10
+
+  ImageContainer: {
+    borderRadius: 50,
+    width: width * 0.23,
+    height: height * 0.15,
+    borderColor: 'white',
+    borderWidth: 3 / PixelRatio.get(),
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
