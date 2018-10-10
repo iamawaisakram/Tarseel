@@ -45,7 +45,7 @@ class Dashboard extends Component {
         });
       },
       error => console.log(error.message),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+      { enableHighAccuracy: true, timeout: 20000 }
     );
     this.watchID = navigator.geolocation.watchPosition(position => {
       this.setState({
@@ -69,7 +69,7 @@ class Dashboard extends Component {
         <MapView
           provider={PROVIDER_GOOGLE}
           style={styles.container}
-          // customMapStyle={RetroMapStyles}
+          customMapStyle={RetroMapStyles}
           showsUserLocation={true}
           region={this.state.region}
           onRegionChange={region => this.setState({ region })}
